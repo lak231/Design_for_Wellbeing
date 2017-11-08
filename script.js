@@ -3,16 +3,17 @@
 var divRoot = $("#affdex_elements")[0];
 var detector = new affdex.CameraDetector(divRoot);
 
-var CHECKIN_TIME = 30;
+var CHECKIN_TIME = 10;
 var ATTENTION_THRESHOLD = 20;
 var NO_FACE_THRESHOLD = 30;
-var EYE_CLOSURE_DURATION_THRESHOLD = 5;
+var EYE_CLOSURE_DURATION_THRESHOLD = 3;
 var EYE_CLOSURE_COUNT_THRESHOLD = 5;
 var EYE_CLOSURE_THRESHOLD = 90;
-var HEAD_TURN_THRESHOLD;
+var HEAD_ANGLE_THRESHOLD = -20;
+var NOTIFICATION_SOUND = new Audio('sound.mp3');
 
 var attention_score = 0;
-var head_turn_times;
+var head_angle = 0;
 var eye_closure_times = 0;
 var eye_closure_start = 0;
 var eye_closure_bool = false;
@@ -21,6 +22,7 @@ var frames = 0;
 var reminders_count = 0;
 var time_since_last_face = 0;
 var face_visible = true;
+var notification_sent = false;
 
 //Enable detection of all Expressions, Emotions and Emojis classifiers.
 detector.detectAllEmotions();
@@ -36,6 +38,9 @@ detector.addEventListener("onInitializeSuccess", function() {
 
 function log(node_name, msg) {
   $(node_name).html("<p>" + msg + "</p>");
+  setTimeout( function () {
+      $(node_name).html("");
+  }, 10000)
 }
 
 //function executes when Start button is pushed.
@@ -93,7 +98,6 @@ detector.addEventListener("onStopSuccess", function() {
 //Faces object contains probabilities for all the different expressions, emotions and appearance metrics
 detector.addEventListener("onImageResultsSuccess", function(faces, image,
   timestamp) {
-    console.log(eye_closure_times + " " + eye_closure_start);
     if (timestamp - time_since_last_face >= NO_FACE_THRESHOLD && face_visible) {
         face_visible = false;
         alert("We could not detect your face for the last " + NO_FACE_THRESHOLD + " seconds");
@@ -107,33 +111,51 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image,
         time_since_last_face = timestamp;
         var delta = timestamp - current_time;
         if (delta >= CHECKIN_TIME) {
+            notification_sent = false;
             if (attention_score / frames <= ATTENTION_THRESHOLD && reminders_count < 3) {
-                alert("You seem a little distracted.");
+                send_notification("You seem a little distracted.");
                 log('#logs', "You seem a little distracted.");
                 reminders_count += 1;
             } else if (attention_score / frames <= ATTENTION_THRESHOLD && reminders_count === 3) {
-                alert("Are you sure you don't need a break?");
+                send_notification("Are you sure you don't need a break?");
                 log('#logs', "Are you sure you don't need a break?");
                 reminders_count = 0;
             }
-            if (eye_closure_times >= EYE_CLOSURE_COUNT_THRESHOLD) {
-                alert("You seem sleepy. Are you sure you don't need a break?");
+
+            if (head_angle / frames <= HEAD_ANGLE_THRESHOLD && reminders_count < 3) {
+                send_notification("You seem to have been looking down a lot.");
+                log('#logs', "You seem to have been looking down a lot.");
+                reminders_count += 1;
+            } else if (head_angle / frames <= HEAD_ANGLE_THRESHOLD && reminders_count === 3) {
+                send_notification("Are you sure you don't need a break?");
+                log('#logs', "Are you sure you don't need a break?");
+                reminders_count = 0;
+            }
+
+            if (eye_closure_times >= EYE_CLOSURE_COUNT_THRESHOLD || (timestamp - eye_closure_start)/EYE_CLOSURE_DURATION_THRESHOLD >= EYE_CLOSURE_COUNT_THRESHOLD) {
+                send_notification("You seem sleepy. Are you sure you don't need a break?");
                 log('#logs', "You seem sleepy. Are you sure you don't need a break?");
                 eye_closure_times = 0;
             }
+
             frames = 0;
             attention_score = 0;
+            head_angle = 0;
             current_time = timestamp;
+
         } else {
             frames += 1;
             attention_score += faces[0].expressions.attention;
+            head_angle += faces[0].measurements.orientation.pitch;
+
+            //eye closure processing
             if (faces[0].expressions.eyeClosure >= EYE_CLOSURE_THRESHOLD && !eye_closure_bool) {
                 eye_closure_start = timestamp;
                 eye_closure_bool = true;
             }
             if (faces[0].expressions.eyeClosure <= (100 - EYE_CLOSURE_THRESHOLD) && eye_closure_bool) {
                 if (timestamp - eye_closure_start >= EYE_CLOSURE_DURATION_THRESHOLD) {
-                    eye_closure_times += 1;
+                    eye_closure_times += parseInt((timestamp - eye_closure_start)/EYE_CLOSURE_DURATION_THRESHOLD);
                 }
                 eye_closure_bool = false;
             }
@@ -149,7 +171,6 @@ function drawFeaturePoints(img, featurePoints) {
   var contxt = $('#face_video_canvas')[0].getContext('2d');
   var hRatio = contxt.canvas.width / img.width;
   var vRatio = contxt.canvas.height / img.height;
-  var ratio = Math.min(hRatio, vRatio);
   contxt.strokeStyle = "#FFFFFF";
   for (var id in featurePoints) {
     contxt.beginPath();
@@ -170,3 +191,13 @@ $(document).ready(function () {
         }, 2500)
     })
 });
+
+function send_notification(msg) {
+    if (notification_sent === false) {
+        NOTIFICATION_SOUND.play();
+        setTimeout(function () {
+            alert(msg)
+        }, 1000);
+        notification_sent = true;
+    }
+}
