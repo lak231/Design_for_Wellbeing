@@ -15,7 +15,7 @@ var attention_score = 0;
 var head_turn_times;
 var eye_closure_times = 0;
 var eye_closure_start = 0;
-var eye_closure_end = 0;
+var eye_closure_bool = false;
 var current_time = 0;
 var frames = 0;
 var reminders_count = 0;
@@ -84,7 +84,7 @@ detector.addEventListener("onStopSuccess", function() {
 //Faces object contains probabilities for all the different expressions, emotions and appearance metrics
 detector.addEventListener("onImageResultsSuccess", function(faces, image,
   timestamp) {
-    console.log(eye_closure_times + " " + eye_closure_start + " " + eye_closure_end);
+    console.log(eye_closure_times + " " + eye_closure_start);
     if (timestamp - time_since_last_face >= NO_FACE_THRESHOLD && face_visible) {
         face_visible = false;
         alert("We could not detect your face for the last " + NO_FACE_THRESHOLD + " seconds");
@@ -104,27 +104,26 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image,
                 alert("Are you sure you don't need a break?");
                 reminders_count = 0;
             }
-            // if (eye_closure_times >= EYE_CLOSURE_COUNT_THRESHOLD) {
-            //     alert("You seem sleepy. Are you sure you don't need a break?");
-            //     eye_closure_times = 0;
-            // }
+            if (eye_closure_times >= EYE_CLOSURE_COUNT_THRESHOLD) {
+                alert("You seem sleepy. Are you sure you don't need a break?");
+                eye_closure_times = 0;
+            }
             frames = 0;
             attention_score = 0;
             current_time = timestamp;
         } else {
             frames += 1;
             attention_score += faces[0].expressions.attention;
-            // if (faces[0].expressions.eyeClosure >= EYE_CLOSURE_THRESHOLD) {
-            //     eye_closure_start = timestamp;
-            // }
-            // if (faces[0].expressions.eyeClosure <= (100 - EYE_CLOSURE_THRESHOLD) && timestamp > eye_closure_start) {
-            //     eye_closure_end = timestamp;
-            // }
-            // if (eye_closure_end - eye_closure_start >= EYE_CLOSURE_DURATION_THRESHOLD) {
-            //     eye_closure_times += 1;
-            //     eye_closure_end = 0;
-            //     eye_closure_start = 0;
-            // }
+            if (faces[0].expressions.eyeClosure >= EYE_CLOSURE_THRESHOLD && !eye_closure_bool) {
+                eye_closure_start = timestamp;
+                eye_closure_bool = true;
+            }
+            if (faces[0].expressions.eyeClosure <= (100 - EYE_CLOSURE_THRESHOLD) && eye_closure_bool) {
+                if (timestamp - eye_closure_start >= EYE_CLOSURE_DURATION_THRESHOLD) {
+                    eye_closure_times += 1;
+                    eye_closure_bool = false;
+                }
+            }
 
         }
         drawFeaturePoints(image, faces[0].featurePoints);
