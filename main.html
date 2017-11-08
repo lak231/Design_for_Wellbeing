@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://download.affectiva.com/js/3.2/affdex.js"></script>
+</head>
+<body>
+    <div id="welcome-screen">
+        <h1>Hello! </h1>
+        <p>Thanks for using an attention tracker to improve your work habits!</p>
+        <p>This tool is best used for people who are looking to stay focused on a specific task on their own computer.</p>
+        <button id="home-start-button">Continue</button>
+    </div>
+
+    <div id="loader"></div>
+
+    <div id="affectiva-div">
+        <div id="affdex_elements"></div>
+        <div id="logs"></div>
+        <div id="control-div">
+            <button id="start" onclick="onStart()">Start</button>
+            <button id="stop" onclick="onStop()">Stop</button>
+            <button id="reset" onclick="onReset()">Reset</button>
+        </div>
+
+        <div id="instruction-div">
+            <h1>Instructions</h1>
+            <p> When doing work on your computer, press the <b>Start</b> button to start the detector. </p>
+            <p> When a face is detected, we will monitor your attention and help you stay focused on your work. </p>
+            <p> Press the <b>Stop</b> button to end the session.</p>
+            <p> <b>Reset</b> will end the current session and start a new monitoring session. </p>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
