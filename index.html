@@ -15,6 +15,13 @@
 <!--import Affectiva javascript support-->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="https://download.affectiva.com/js/3.2/affdex.js"></script>
+
+<script type="text/javascript">
+alert("Hello! Thanks for using an attention tracker to improve your work habits! \
+This tool is best used for people who are looking to stay focused on a specific task on their own computer. Enjoy!");
+</script>
+
+
 </head>
 
 
@@ -22,6 +29,7 @@
 
 <body>
   <!-- the entire window container -->
+
   <div class="container-fluid">
 
 
@@ -60,13 +68,14 @@
       <button id="start" onclick="onStart()">Start</button>
       <button id="stop" onclick="onStop()">Stop</button>
       <button id="reset" onclick="onReset()">Reset</button>
-      <h3>Affectiva JS SDK CameraDetector to track different emotions.</h3>
+      <h3>Attention Monitor</h3>
       <p>
         <strong>Instructions</strong>
-        <br>
-        Press the start button to start the detector.
-        <br/> When a face is detected, the probabilities of the different emotions are written to the DOM.
-        <br/> Press the stop button to end the detector.
+        </br>
+        When doing work on your computer, press the start button to start the detector.
+        <br/> When a face is detected, we will monitor your attention and help you stay focused on your work.
+        <br/> Press the stop button to end the session.
+        <br/> Reset will end the current session and start a new monitoring session.
       </p>
     </div>
     <!-- END: BOTTOM half of SCREEN container -->
