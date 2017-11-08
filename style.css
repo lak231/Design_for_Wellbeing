@@ -158,4 +158,5 @@ button:hover {
     width: calc(100% - 2em);
     justify-content: center;
     justify-items: center;
+    line-height: 150%;
 }

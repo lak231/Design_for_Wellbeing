@@ -5,7 +5,7 @@ var detector = new affdex.CameraDetector(divRoot);
 
 var CHECKIN_TIME = 10;
 var ATTENTION_THRESHOLD = 20;
-var NO_FACE_THRESHOLD = 30;
+var NO_FACE_THRESHOLD = 10;
 var EYE_CLOSURE_DURATION_THRESHOLD = 3;
 var EYE_CLOSURE_COUNT_THRESHOLD = 5;
 var EYE_CLOSURE_THRESHOLD = 90;
@@ -132,7 +132,7 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image,
                 reminders_count = 0;
             }
 
-            if (eye_closure_times >= EYE_CLOSURE_COUNT_THRESHOLD || (timestamp - eye_closure_start)/EYE_CLOSURE_DURATION_THRESHOLD >= EYE_CLOSURE_COUNT_THRESHOLD) {
+            if (eye_closure_times >= EYE_CLOSURE_COUNT_THRESHOLD) {
                 send_notification("You seem sleepy. Are you sure you don't need a break?");
                 log('#logs', "You seem sleepy. Are you sure you don't need a break?");
                 eye_closure_times = 0;
