@@ -121,8 +121,8 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image,
             if (faces[0].expressions.eyeClosure <= (100 - EYE_CLOSURE_THRESHOLD) && eye_closure_bool) {
                 if (timestamp - eye_closure_start >= EYE_CLOSURE_DURATION_THRESHOLD) {
                     eye_closure_times += 1;
-                    eye_closure_bool = false;
                 }
+                eye_closure_bool = false;
             }
 
         }
