@@ -26,7 +26,7 @@ var face_visible = true;
 detector.detectAllEmotions();
 detector.detectAllExpressions();
 
-//Add a callback to notify when the detector is initialized and ready for runing.
+//Add a callback to notify when the detector is initialized and ready for running.
 detector.addEventListener("onInitializeSuccess", function() {
   log('#logs', "The detector reports initialized");
   //Display canvas instead of video feed because we want to draw the feature points on it
@@ -88,6 +88,7 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image,
     if (timestamp - time_since_last_face >= NO_FACE_THRESHOLD && face_visible) {
         face_visible = false;
         alert("We could not detect your face for the last " + NO_FACE_THRESHOLD + " seconds");
+        log('#logs', "We could not detect your face for the last " + NO_FACE_THRESHOLD + " seconds");
     }
 
     if (faces.length > 0) {
@@ -99,13 +100,16 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image,
         if (delta >= CHECKIN_TIME) {
             if (attention_score / frames <= ATTENTION_THRESHOLD && reminders_count < 3) {
                 alert("You seem a little distracted.");
+                log('#logs', "You seem a little distracted.");
                 reminders_count += 1;
             } else if (attention_score / frames <= ATTENTION_THRESHOLD && reminders_count === 3) {
                 alert("Are you sure you don't need a break?");
+                log('#logs', "Are you sure you don't need a break?");
                 reminders_count = 0;
             }
             if (eye_closure_times >= EYE_CLOSURE_COUNT_THRESHOLD) {
                 alert("You seem sleepy. Are you sure you don't need a break?");
+                log('#logs', "You seem sleepy. Are you sure you don't need a break?");
                 eye_closure_times = 0;
             }
             frames = 0;
