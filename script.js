@@ -28,7 +28,7 @@ detector.detectAllExpressions();
 
 //Add a callback to notify when the detector is initialized and ready for running.
 detector.addEventListener("onInitializeSuccess", function() {
-  log('#logs', "The detector reports initialized");
+  log('#logs', "Tracker initialized.");
   //Display canvas instead of video feed because we want to draw the feature points on it
   $("#face_video_canvas").css("display", "block");
   $("#face_video").css("display", "none");
@@ -44,12 +44,12 @@ function onStart() {
     $("#logs").html("");
     detector.start();
   }
-  log('#logs', "Clicked the start button");
+  //log('#logs', "Clicked the start button");
 }
 
 //function executes when the Stop button is pushed.
 function onStop() {
-  log('#logs', "Clicked the stop button");
+  //log('#logs', "Clicked the stop button");
   if (detector && detector.isRunning) {
     detector.removeEventListener();
     detector.stop();
@@ -58,10 +58,19 @@ function onStop() {
 
 //function executes when the Reset button is pushed.
 function onReset() {
-  log('#logs', "Clicked the reset button");
+  //log('#logs', "Clicked the reset button");
   if (detector && detector.isRunning) {
     detector.reset();
   }
+  attention_score = 0;
+  eye_closure_times = 0;
+  eye_closure_start = 0;
+  eye_closure_bool = false;
+  current_time = 0;
+  frames = 0;
+  reminders_count = 0;
+  time_since_last_face = 0;
+  face_visible = true;
 }
 
 //Add a callback to notify when camera access is allowed
@@ -71,12 +80,12 @@ detector.addEventListener("onWebcamConnectSuccess", function() {
 
 //Add a callback to notify when camera access is denied
 detector.addEventListener("onWebcamConnectFailure", function() {
-  log('#logs', "Webcam access denied");
+  log('#logs', "Webcam access denied. Please allow webcam access for the tracker to work.");
 });
 
 //Add a callback to notify when detector is stopped
 detector.addEventListener("onStopSuccess", function() {
-  log('#logs', "The detector reports stopped");
+  log('#logs', "Tracker stopped.");
 });
 
 //Add a callback to receive the results from processing an image.
@@ -158,6 +167,6 @@ $(document).ready(function () {
         setTimeout(function () {
             $("#loader").css("display", "none");
             $("#affectiva-div").css("display", "block");
-        }, 2000)
+        }, 2500)
     })
 });
