@@ -40,7 +40,7 @@ function log(node_name, msg) {
   $(node_name).html("<p>" + msg + "</p>");
   setTimeout( function () {
       $(node_name).html("");
-  }, 10000)
+  }, 30000)
 }
 
 //function executes when Start button is pushed.
