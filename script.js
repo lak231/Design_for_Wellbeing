@@ -7,9 +7,15 @@ var faceMode = affdex.FaceDetectorMode.LARGE_FACES;
 //Construct a CameraDetector and specify the image width / height and face detector mode.
 var detector = new affdex.CameraDetector(divRoot, width, height, faceMode);
 
+
+var HEAD_TURN_THRESHOLD = 30;
+
+
 var attention_score = 0;
+var head_turn_times = 0;
 var current_time = 0;
-var count = 0;
+var frames = 0;
+var reminder_times = 0;
 
 
 
@@ -86,14 +92,15 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image,
   $('#results').html("");
   log('#results', "Timestamp: " + timestamp);
     if (faces.length > 0) {
+        console.log(faces[0].measurements.orientation.pitch);
         var delta = timestamp - current_time;
-        if (delta >= 5) {
-            console.log("Attention: " + attention_score/count);
-            count = 0;
+        if (delta >= 30) {
+            console.log("Attention: " + attention_score/frames);
+            frames = 0;
             attention_score = 0;
             current_time = timestamp;
         } else {
-            count += 1;
+            frames += 1;
             attention_score += faces[0].expressions.attention;
         }
         drawFeaturePoints(image, faces[0].featurePoints);
