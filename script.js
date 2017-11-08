@@ -6,8 +6,8 @@ var detector = new affdex.CameraDetector(divRoot);
 var CHECKIN_TIME = 10;
 var ATTENTION_THRESHOLD = 20;
 var NO_FACE_THRESHOLD = 10;
-var EYE_CLOSURE_DURATION_THRESHOLD = 3;
-var EYE_CLOSURE_COUNT_THRESHOLD = 5;
+var EYE_CLOSURE_DURATION_THRESHOLD = 2;
+var EYE_CLOSURE_COUNT_THRESHOLD = 2;
 var EYE_CLOSURE_THRESHOLD = 90;
 var HEAD_ANGLE_THRESHOLD = -20;
 var NOTIFICATION_SOUND = new Audio('sound.mp3');
@@ -100,7 +100,8 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image,
   timestamp) {
     if (timestamp - time_since_last_face >= NO_FACE_THRESHOLD && face_visible) {
         face_visible = false;
-        alert("We could not detect your face for the last " + NO_FACE_THRESHOLD + " seconds");
+        notification_sent = false;
+        send_notification("We could not detect your face for the last " + NO_FACE_THRESHOLD + " seconds");
         log('#logs', "We could not detect your face for the last " + NO_FACE_THRESHOLD + " seconds");
     }
 
