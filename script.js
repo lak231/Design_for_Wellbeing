@@ -4,8 +4,8 @@ var divRoot = $("#affdex_elements")[0];
 var detector = new affdex.CameraDetector(divRoot);
 
 var CHECKIN_TIME = 5;
-var ATTENTION_THRESHOLD = 20;
-var NO_FACE_THRESHOLD = 5;
+var ATTENTION_THRESHOLD = 30;
+var NO_FACE_THRESHOLD = 30;
 var EYE_CLOSURE_DURATION_THRESHOLD = 1;
 var EYE_CLOSURE_COUNT_THRESHOLD = 1;
 var EYE_CLOSURE_THRESHOLD = 90;
